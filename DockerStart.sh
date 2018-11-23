@@ -5,28 +5,36 @@
 # Docker files are assumed to be in their respective folders
 
 # general
-rabitmqName="myRabbitMq" 
+rabitmqName="myRabbitMq"
 mongoName="mongo"
 keystoreFolderPath="/absolute/path/to/file/back-end:/usr/src/app/certs/server"
 rabbitKeystoreFolderPath="/absolute/path/to/file/back-end:/usr/src/app/certs/rabbit"
-# front end 
+# front end variables
 frontEndHost="localhost"
-frontEndPort="11111" 
+frontEndPort="11111"
 frontEndName="frontend"
 frontEndEnvFile="./front-end/frontend.env"
 frontEndDockerFilePath="./front-end"
-# back end
+# back end variables
 backEndHost="localhost"
 backEndPort="11112"
 backEndName="backend"
 backEndEnvFile="./back-end/backend.env"
 backEndDockerFilePath="./back-end"
+# postgresql variables
+containerName="postgresql_database"
+databaseName="db"
+databaseUserName="user"
+databasePassword="pass"
+environmentPort="127.0.0.1:5432"
+containerPort="5432"
+
 
 # function takes the filepath+filename string host and port as arguments
 # so that the front and back end containers know where to find each other
 
 create_env_file(){
-  if [ -e $1 ]; then 
+  if [ -e $1 ]; then
     rm $1
   fi
   echo "HOST=$2" >> $1
@@ -51,11 +59,15 @@ reset_backend(){
   docker build -t test/backend $backEndDockerFilePath
   docker run -p $backEndPort:8081 -v $keystoreFolderPath -v $rabbitKeystoreFolderPath -d --env-file $backEndEnvFile --link mongo:mongo --name $backEndName test/backend
 }
+reset_postgresql(){
+  docker rm -f $containerName
+  docker run -d --name $containerName -e POSTGRESQL_USER=$databaseUserName -e POSTGRESQL_PASSWORD=$databasePassword -e POSTGRESQL_DATABASE=$databaseName -p $environmentPort:$containerPort centos/postgresql-96-centos7
+}
 #zenity configuration
 title="Node project containers"
 prompt="Please pick a container to run"
 windowHeight=300
-options=("Initialize all" "FrontEnd restart" "BackEnd restart" "Mongo restart" "Rabbit restart" "Show containers")
+options=("Initialize all" "FrontEnd restart" "BackEnd restart" "Mongo restart" "Rabbit restart" "Show containers" "Postgresql")
 
 while opt=$(zenity --title="$title" --text="$prompt" --height="$windowHeight" --list \
                    --column="Options" "${options[@]}"); do
@@ -83,6 +95,9 @@ while opt=$(zenity --title="$title" --text="$prompt" --height="$windowHeight" --
         ;;
     "${options[5]}" )
       docker ps -a
+        ;;
+    "${options[6]}" )
+      reset_postgresql
         ;;
     *) zenity --error --text="Invalid option. Try another one.";;
     esac
