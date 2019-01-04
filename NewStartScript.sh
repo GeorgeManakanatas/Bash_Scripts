@@ -1,8 +1,25 @@
 #!/bin/bash
 
+# check that folder exists function
+# folder name or path and window text must be provided
+check4folder(){
+  cd ~ # will look for home by default
+  if [ -d "$PWD/$1" ]; then
+    echo "$PWD/$1" # if found returns absolute path
+  else
+    # if not promptsuser to find
+    pathToFolder=$(zenity --title="$2" --file-selection --directory )
+    # check that user provided path
+    if [ -z "$pathToFolder" ]; then
+      echo "error" # if no selection return error
+    else
+      echo "$pathToFolder" # else return asolute path
+    fi
+  fi
+}
 # notification function
 notification(){
-  zenity --notification --window-icon="info" --text="$1"
+  zenity --notification --window-icon="info" --text="$1" --timeout=2
 }
 # rabbitmq variables
 activemqName="ActiveMQ"
@@ -147,44 +164,47 @@ open_anaconda(){
   anacondaTitle="    Anaconda    "
   anacondaPrompt="Make your selection"
   anacondaWindowHeight=300
-  # getting the selected checkboxes
-  response=$(zenity --height="$anacondaWindowHeight" --list --checklist \
-     --title="$anacondaTitle" --column="" --column="$anacondaPrompt" \
-     False "Navigator" False "Spyder" False "Jupyter"  False "Orange" \
-     --separator=':');
+  # checking that anaconda3/bin is in the system
+  absolutePath=$(check4folder "anaconda3/bin" "Select the Anaconda3 bin Folder")
+  #
+  if [ $absolutePath = "error" ]; then
+    # if anaconda not present in the system
+    notification "Anaconda not found"
+    #echo "Anaconda not found"
+  else
+    # getting the selected checkboxes
+    response=$(zenity --height="$anacondaWindowHeight" --list --checklist \
+       --title="$anacondaTitle" --column="" --column="$anacondaPrompt" \
+       False "Navigator" False "Spyder" False "Jupyter"  False "Orange" \
+       --separator=':');
+  fi
+
   # check for no selection
   if [ -z "$response" ] ; then
-     echo "No selection"
+     notification "No selection made"
+     #echo "No selection"
      #exit 1
   fi
   # if selection made
   IFS=":" ; for word in $response ; do
      case $word in
         "Navigator")
-          # assuming that anaconda is installed in user home
-          cd ~
-          cd ./anaconda3/bin
+          cd $absolutePath
           ./anaconda-navigator & disown
           notification "Navigator started"
           ;;
         "Spyder")
-          # assuming that anaconda is installed in user home
-          cd ~
-          cd ./anaconda3/bin
+          cd $absolutePath
           ./spyder & disown
           notification "Spyder started"
           ;;
         "Jupyter_Lab")
-          # assuming that anaconda is installed in user home
-          cd ~
-          cd ./anaconda3/bin
+          cd $absolutePath
           ./jupyter-lab & disown
           notification "Jupyter-lab started"
           ;;
         "Orange")
-          # assuming that anaconda is installed in user home
-          cd ~
-          cd ./anaconda3/bin
+          cd $absolutePath
           ./orange-canvas & disown
           notification "Orange started"
           ;;
