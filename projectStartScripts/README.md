@@ -8,29 +8,12 @@ One Paragraph of project description goes here
 
 ```
 .
-├── dockerStartScripts
-│   ├── dockerContainers.sh
-│   └── DockerStart.sh
-├── LICENSE.md
-├── NewStartScript.sh
-├── projectStartScripts
-│   ├── nodeProjectScript.sh
-│   ├── pythonVirtualEnvsGUI.sh
-│   └── startScriptCLI.sh
+├── nodeProjectScript.sh
+├── pythonVirtualEnvsGUI.sh
 ├── README.md
-├── treeScript
-│   ├── postTree.md
-│   ├── preTree.md
-│   ├── README.md
-│   └── treeScript.sh
-└── treeScriptAnsible
-    ├── ReadMeCreation.retry
-    ├── ReadMeCreation.yaml
-    ├── README.md
-    ├── templates
-    └── treeScriptAnsible.sh
+└── startScriptCLI.sh
 
-5 directories, 16 files
+0 directories, 4 files
 ```
 ## Getting Started
 

@@ -8,7 +8,7 @@ question(){
   echo "$?"
 }
 
-# should get the path to the folder and the file name in that order
+# should get the p.kath to the folder and the file name in that order
 check_for_file(){
   if [ -e "$1/$2" ]; then
     # if the file exists as if it is to be replaced.
@@ -28,17 +28,7 @@ check_for_file(){
 }
 
 generate_readme_file(){
-  cd $1
-  echo "# ${PWD##*/}" >> $1/$2
-  echo "Auto generated readme file" >> $1/$2
-  echo "" >> $1/$2
-  echo "## Tree structure" >> $1/$2
-  echo "" >> $1/$2
-  echo "\`\`\`" >> $1/$2
-  tree -L 1 >> $1/$2
-  echo "\`\`\`" >> $1/$2
-  echo "" >> $1/$2
-  echo "More stuff under the structure" >> $1/$2
+  ansible-playbook "./ReadMeCreation.yaml" --extra-vars "filepath=$1 filename=$2"
 }
 
 ##  Main section  ##
@@ -53,7 +43,8 @@ if [ ${#pathToFolder} -ne 0 ]; then
   # for the subdirectories
   for d in $pathToFolder/*; do
     if [ -d "$d" ]; then
-      check_for_file "$d" "$filename"
+      echo "for $d"
+      check_for_file "$d/" "$filename"
     fi
   done
 

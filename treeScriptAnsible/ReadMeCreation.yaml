@@ -1,0 +1,31 @@
+---
+  - hosts: 127.0.0.1
+    connection: local
+    vars:
+      input_filepath: "{{ filepath }}"
+      input_filename: "{{ filename }}"
+      treeTrunk: "{{ tree_contents.stdout }}"
+    tasks:
+      - name: create file
+        file:
+          path: "{{input_filepath}}{{input_filename}}"
+          state: touch
+      - shell: "tree -L 2 {{input_filepath}}"
+        register: tree_contents
+      - blockinfile:
+          dest: "{{input_filepath}}{{input_filename}}"
+          block: "{{ lookup('template', '{{ item }}.j2')}}"
+          marker: ""
+        with_items:
+          - banner
+          - projectTitle
+          - folderTree
+          - gettingStarted
+          - runningTests
+          - deployment
+          - builtWith
+          - contributing
+          - versioning
+          - authors
+          - license
+          - acknowledgements
