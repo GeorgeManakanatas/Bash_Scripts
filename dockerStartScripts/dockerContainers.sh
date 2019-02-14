@@ -50,6 +50,11 @@ open_terminal(){
   cd ~
   gnome-terminal & disown
 }
+remove_container(){
+  container=$(zenity --entry --title="Stop Container" --text="Container to stop" );
+  sudo docker container stop $container
+  sudo docker container rm $container
+}
 #zenity configuration
 title="Node project containers"
 prompt="Please pick a container to run"
@@ -57,7 +62,7 @@ windowHeight=300
 #
 response=$(zenity --height="$windowHeight" --list --checklist \
    --title="$title" --column="" --column="Options" \
-   False "RabbitMQ" False "ActiveMQ" False "Postgresql" False "MongoDB" False "MariaDB" --separator=':');
+   False "RabbitMQ" False "ActiveMQ" False "Postgresql" False "MongoDB" False "MariaDB" False "Show containers" "Remove Container" --separator=':');
 
 # check for no selection
 if [ -z "$response" ] ; then
@@ -77,6 +82,10 @@ IFS=":" ; for word in $response ; do
         reset_mongo ;;
       "MariaDB")
         reset_maria ;;
+      "Show containers")
+        docker ps -a ;;
+      "Remove Container" )
+        remove_container ;;
    esac
 done
 # Show containers

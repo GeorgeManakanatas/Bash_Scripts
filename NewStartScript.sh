@@ -25,6 +25,7 @@ notification(){
 activemqName="ActiveMQ"
 # reset for active container
 reset_activemq(){
+  spd-say "Resetting active m q container"
   sudo docker rm -f $activemqName
   sudo docker run --name $activemqName -d webcenter/activemq:latest
 }
@@ -32,6 +33,7 @@ reset_activemq(){
 rabitmqName="RabbitMq"
 #  reset for rabbit container
 reset_rabbitmq(){
+  spd-say "Resetting rabbit m q container"
   sudo docker rm -f $rabitmqName
   sudo docker run --name $rabitmqName -d rabbitmq:3
 }
@@ -42,6 +44,7 @@ mariaEnvironmentPort="3306"
 mariaContainerPort="3306"
 # reset for maria container
 reset_maria(){
+  spd-say "Resetting maria d b container"
   sudo docker rm -f $mariaName
   sudo docker run --name $mariaName -e MYSQL_ROOT_PASSWORD=$mariaPassword \
     -p $mariaEnvironmentPort:$mariaContainerPort -d mariadb:10.3.10-bionic
@@ -52,6 +55,7 @@ mongoEnvironmentPort="27017"
 mongoContainerPort="27017"
 # reset for mongo container
 reset_mongo(){
+  spd-say "Resetting mongo d b container"
   sudo docker rm -f $mongoName
   sudo docker run --name $mongoName -d mongo:3.6
 }
@@ -64,12 +68,20 @@ postgresEnvironmentPort="5432"
 postgresContainerPort="5432"
 # reset for postgresql container
 reset_postgresql(){
+  spd-say "Resetting post gre s q l container"
   sudo docker rm -f $postgresContainerName ;
   sudo docker run --name $postgresContainerName -e \
   POSTGRESQL_USER=$postgresUserName -e POSTGRESQL_PASSWORD=$postgresPassword \
   -e POSTGRESQL_DATABASE=$postgresName \
   -p $postgresEnvironmentPort:$postgresContainerPort \
   -d centos/postgresql-96-centos7 ;
+}
+# remove container
+remove_container(){
+  container=$(zenity --entry --title="Stop Container" --text="Container to stop" );
+  spd-say "Removing $container container"
+  sudo docker container stop $container
+  sudo docker container rm $container
 }
 #
 # terminal window function
@@ -79,6 +91,7 @@ open_terminals(){
   --text="Do you want to open a terminal window?" \
   --ok-label="Yes" --cancel-label="No"); do
     if [ $? = 0 ] ; then
+      spd-say "Opening new terminal"
       cd ~
       gnome-terminal & disown
     else
@@ -87,9 +100,10 @@ open_terminals(){
     fi
   done
 }
-#
-# containers window function
-#
+
+##############################
+# containers window function #
+##############################
 start_containers(){
   #zenity containers configuration
   containersTitle="    Containers    "
@@ -99,7 +113,7 @@ start_containers(){
   response=$(zenity --height="$containersWindowHeight" --list --checklist \
      --title="$containersTitle" --column="" --column="$containersPrompt" \
      False "RabbitMQ" False "ActiveMQ" False "Postgresql" False "MongoDB" \
-     False "MariaDB" --separator=':');
+     False "MariaDB" False "Show containers" False "Remove Container" --separator=':');
 
   # check for no selection
   if [ -z "$response" ] ; then
@@ -124,6 +138,11 @@ start_containers(){
         "MariaDB")
           reset_maria
           notification "MariaDB container restarted" ;;
+        "Show containers")
+          spd-say "Showing containers"
+          sudo docker ps -a ;;
+        "Remove Container")
+          remove_container ;;
      esac
   done
   # Show containers
@@ -150,8 +169,10 @@ open_browsers(){
   IFS=":" ; for word in $response ; do
      case $word in
         "Chrome")
+          spd-say "Starting chrome"
           google-chrome & disown ;;
         "Firefox")
+          spd-say "Starting firefox"
           firefox & disown ;;
      esac
   done
@@ -189,21 +210,25 @@ open_anaconda(){
   IFS=":" ; for word in $response ; do
      case $word in
         "Navigator")
+          spd-say "Starting Navigator"
           cd $absolutePath
           ./anaconda-navigator & disown
           notification "Navigator started"
           ;;
         "Spyder")
+          spd-say "Starting Spyder"
           cd $absolutePath
           ./spyder & disown
           notification "Spyder started"
           ;;
         "Jupyter_Lab")
+          spd-say "Starting Jupyter lab"
           cd $absolutePath
           ./jupyter-lab & disown
           notification "Jupyter-lab started"
           ;;
         "Orange")
+          spd-say "Starting Orange"
           cd $absolutePath
           ./orange-canvas & disown
           notification "Orange started"
@@ -211,13 +236,15 @@ open_anaconda(){
      esac
   done
 }
+
+
 #
 # zenity main window configuration
 #
 mainTitle="New start script"
 mainPrompt="Please pick an option"
 mainWindowHeight=300
-mainOptions=("Docker containers" "Browsers" "Anaconda" "Terminals" "Atom")
+mainOptions=("Docker containers" "Browsers" "Anaconda" "Terminals" "Pyhon projects" "Atom")
 
 while opt=$(zenity --title="$mainTitle" --text="$mainPrompt" \
 --height="$mainWindowHeight" --list --column="Options" "${mainOptions[@]}"); do
@@ -236,6 +263,12 @@ while opt=$(zenity --title="$mainTitle" --text="$mainPrompt" \
       open_terminals
         ;;
     "${mainOptions[4]}" )
+      # for now I can't run multiple environments from inside this script so I seperated them
+      cd ~
+      ./Documents/projects/Bash_Scripts/projectStartScripts/pythonVirtualEnvsGUI.sh
+        ;;
+    "${mainOptions[5]}" )
+      spd-say "Opening atom editor"
       atom & disown
         ;;
     *) zenity --error --text="Invalid option. Try another one.";;

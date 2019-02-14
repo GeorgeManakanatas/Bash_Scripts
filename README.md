@@ -10,12 +10,14 @@ One Paragraph of project description goes here
 .
 ├── dockerStartScripts
 │   ├── dockerContainers.sh
-│   └── DockerStart.sh
+│   ├── DockerStart.sh
+│   └── README.md
 ├── LICENSE.md
 ├── NewStartScript.sh
 ├── projectStartScripts
 │   ├── nodeProjectScript.sh
 │   ├── pythonVirtualEnvsGUI.sh
+│   ├── README.md
 │   └── startScriptCLI.sh
 ├── README.md
 ├── treeScript
@@ -30,7 +32,7 @@ One Paragraph of project description goes here
     ├── templates
     └── treeScriptAnsible.sh
 
-5 directories, 16 files
+5 directories, 18 files
 ```
 ## Getting Started
 

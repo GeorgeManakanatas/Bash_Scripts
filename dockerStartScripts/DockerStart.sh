@@ -41,64 +41,74 @@ create_env_file(){
   echo "PORT=$3" >> $1
 }
 reset_mongo(){
-  docker rm -f $mongoName
-  docker run --name $mongoName -d --restart always mongo:3.6
+  sudo docker rm -f $mongoName
+  sudo docker run --name $mongoName -d --restart always mongo:3.6
 }
 #docker run -d --hostname my-rabbit --name some-rabbit rabbitmq:3
 reset_rabbitmq(){
-  docker rm -f $rabitmqName
-  docker run --name $rabitmqName -d --restart always rabbitmq:3
+  sudo docker rm -f $rabitmqName
+  sudo docker run --name $rabitmqName -d --restart always rabbitmq:3
 }
 reset_frontend(){
-  docker rm -f $frontEndName
-  docker build -t test/frontend $frontEndDockerFilePath
-  docker run -d --env-file $frontEndEnvFile -p $frontEndPort:80 --name $frontEndName test/frontend
+  sudo docker rm -f $frontEndName
+  sudo docker build -t test/frontend $frontEndDockerFilePath
+  sudo docker run -d --env-file $frontEndEnvFile -p $frontEndPort:80 --name $frontEndName test/frontend
 }
 reset_backend(){
-  docker rm -f $backEndName
-  docker build -t test/backend $backEndDockerFilePath
-  docker run -p $backEndPort:8081 -v $keystoreFolderPath -v $rabbitKeystoreFolderPath -d --env-file $backEndEnvFile --link mongo:mongo --name $backEndName test/backend
+  sudo docker rm -f $backEndName
+  sudo docker build -t test/backend $backEndDockerFilePath
+  sudo docker run -p $backEndPort:8081 -v $keystoreFolderPath -v $rabbitKeystoreFolderPath -d --env-file $backEndEnvFile --link mongo:mongo --name $backEndName test/backend
 }
 reset_postgresql(){
-  docker rm -f $containerName
-  docker run -d --name $containerName -e POSTGRESQL_USER=$databaseUserName -e POSTGRESQL_PASSWORD=$databasePassword -e POSTGRESQL_DATABASE=$databaseName -p $environmentPort:$containerPort centos/postgresql-96-centos7
+  sudo docker rm -f $containerName
+  sudo docker run -d --name $containerName -e POSTGRESQL_USER=$databaseUserName -e POSTGRESQL_PASSWORD=$databasePassword -e POSTGRESQL_DATABASE=$databaseName -p $environmentPort:$containerPort centos/postgresql-96-centos7
+}
+remove_container(){
+  container=$(zenity --entry --title="Stop Container" --text="Container to stop" );
+  sudo docker container stop $container
+  sudo docker container rm $container
 }
 #zenity configuration
 title="Node project containers"
 prompt="Please pick a container to run"
-windowHeight=300
-options=("Initialize all" "FrontEnd restart" "BackEnd restart" "Mongo restart" "Rabbit restart" "Show containers" "Postgresql")
+windowHeight=350
+options=("Initialize all" "FrontEnd restart" "BackEnd restart" "Mongo restart" "Rabbit restart" "Show containers" "Postgresql" "Remove Container")
 
 while opt=$(zenity --title="$title" --text="$prompt" --height="$windowHeight" --list \
                    --column="Options" "${options[@]}"); do
 
-    case "$opt" in
-    "${options[0]}" )
-      create_env_file $backEndEnvFile $frontEndHost $frontEndPort
-      create_env_file $frontEndEnvFile $backEndHost $backEndPort
-      reset_mongo
-      reset_rabbitmq
-      reset_backend
-      reset_frontend
-        ;;
-    "${options[1]}" )
-      reset_frontend
-        ;;
-    "${options[2]}" )
-      reset_backend
-        ;;
-    "${options[3]}" )
-      reset_mongo
-        ;;
-    "${options[4]}" )
-      reset_rabbitmq
-        ;;
-    "${options[5]}" )
-      docker ps -a
-        ;;
-    "${options[6]}" )
-      reset_postgresql
-        ;;
-    *) zenity --error --text="Invalid option. Try another one.";;
-    esac
+    IFS=":" ; for word in $opt ; do
+      case "$opt" in
+      "Initialize all" )
+        create_env_file $backEndEnvFile $frontEndHost $frontEndPort
+        create_env_file $frontEndEnvFile $backEndHost $backEndPort
+        reset_mongo
+        reset_rabbitmq
+        reset_backend
+        reset_frontend
+          ;;
+      "FrontEnd restart" )
+        reset_frontend
+          ;;
+      "BackEnd restart" )
+        reset_backend
+          ;;
+      "Mongo restart" )
+        reset_mongo
+          ;;
+      "Rabbit restart" )
+        reset_rabbitmq
+          ;;
+      "Show containers" )
+        sudo docker ps -a
+          ;;
+      "Postgresql" )
+        reset_postgresql
+          ;;
+      "Remove Container" )
+        remove_container
+          ;;
+      *) zenity --error --text="Invalid option. Try another one.";;
+      esac
+    done
 done
