@@ -8,11 +8,11 @@ One Paragraph of project description goes here
 
 ```
 .
-├── dockerStartScripts
+├── dockerScripts
 │   ├── dockerContainers.sh
 │   ├── DockerStart.sh
 │   └── README.md
-├── LICENSE.md
+├── LICENSE
 ├── NewStartScript.sh
 ├── projectStartScripts
 │   ├── nodeProjectScript.sh
@@ -20,19 +20,11 @@ One Paragraph of project description goes here
 │   ├── README.md
 │   └── startScriptCLI.sh
 ├── README.md
-├── treeScript
-│   ├── postTree.md
-│   ├── preTree.md
-│   ├── README.md
-│   └── treeScript.sh
-└── treeScriptAnsible
-    ├── ReadMeCreation.retry
-    ├── ReadMeCreation.yaml
-    ├── README.md
-    ├── templates
-    └── treeScriptAnsible.sh
+└── treeScript
+    ├── treeScriptAnsible
+    └── treeScriptBash
 
-5 directories, 18 files
+5 directories, 10 files
 ```
 ## Getting Started
 
@@ -108,7 +100,7 @@ See also the list of [contributors](https://github.com/your/project/contributors
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 ## Acknowledgments
 

@@ -1,6 +1,12 @@
 #!/bin/bash
 
-## Supporting functions ##
+################
+# general info #
+################
+
+########################
+# Supporting functions #
+########################
 
 # should get title and text in that order
 question(){
