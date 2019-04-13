@@ -50,7 +50,7 @@ open_python_projects(){
   # getting the selected checkboxes
   response=$(zenity --height="$pythonWindowHeight" --list --checklist \
      --title="$pythonEnvironmentTitle" --column="" --column="$pythonPrompt" \
-     False "OpenCV project" False "Sound project" False "Django project"\
+     False "ImageRec project" False "Sound project" False "Django project"\
      --separator=':');
 
   # check for no selection
@@ -62,11 +62,11 @@ open_python_projects(){
   # if selection made
   IFS=":" ; for word in $response ; do
      case $word in
-        "OpenCV project")
-          start_environment "OpenCV" "Documents/python3environments/OpenCVenvironment/bin" "Documents/projects/openCVproject"
+        "ImageRec project")
+          start_environment "ImageRec" "Documents/python3environments/ImageRecProjectEnvironment/bin" "Documents/projects/ImageRecProject"
           ;;
         "Sound project")
-          start_environment "sound" "Documents/python3environments/pythonSound/bin" "Documents/projects/pythonSound"
+          start_environment "sound" "Documents/python3environments/pythonSoundEnvironment/bin" "Documents/projects/pythonSound"
           ;;
         "Django project")
           start_environment "django" "/not/existant/folder/" "/not/existant/folder/"
