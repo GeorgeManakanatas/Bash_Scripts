@@ -34,7 +34,7 @@ generate_readme_file(){
   echo "" >> $1/$2
   echo "\`\`\`" >> $1/$2
   cd $1
-  tree -L 2 >> $1/$2
+  tree -L 2 --dirsfirst >> $1/$2
   cd $3
   echo "\`\`\`" >> $1/$2
   cat postTree.md >> $1/$2
