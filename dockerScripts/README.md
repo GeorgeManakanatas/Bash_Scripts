@@ -3,22 +3,23 @@
 # Project Title
 
 Various scripts dealing with Docker.
-* dockerContainers is a generic script for working with Docker images and containers to avoid typing a bunch
-
-* DockerStart is oriented more towards automating the start up and working with a MEAN stack project
+* **dockerContainers:** Is a generic script for working with Docker images and containers to avoid typing a bunch
+* **DockerStart:** Is oriented more towards automating the start up and working with a MEAN stack project
+* **graylogDefaultStart:** Is a script that creates mongo and elasticsearch containers to support a local graylog container
 
 ## File structure
 ```
 .
 ├── dockerContainers.sh
 ├── DockerStart.sh
+├── graylogDefaultStart.sh
 └── README.md
 
-0 directories, 3 files
+0 directories, 4 files
 ```
 ## Getting Started
 
-Clone or download the repository.
+Clone or download the repository. Run the scripts as desired.
 
 ### Prerequisites
 

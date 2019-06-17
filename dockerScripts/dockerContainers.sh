@@ -3,7 +3,7 @@
 # general info #
 ################
 
-# General purpose script to make working with containers easyer.  
+# General purpose script to make working with containers easyer.
 
 ########################
 # supporting functions #
@@ -67,11 +67,13 @@ open_terminal(){
 start_container(){
   # popup for user to give the name of the container to be started and starts it
   container=$(zenity --entry --title="Start Container" --text="Container to start" );
+  #
   sudo docker container start $container
 }
 stop_container(){
   # presents popup for user to give the name of the container to be stoped and stops it
-  container=$(zenity --entry --title="Stop Container" --text="Container to stop" );
+  container=$( zenity --entry --title="Stop Container" --text="Container to Stop" );
+  #
   sudo docker container stop $container
 }
 create_container(){
@@ -83,7 +85,7 @@ create_container(){
 }
 remove_container(){
   # popup for the user to give the name of the container to be removed
-  container=$(zenity --entry --title="Remove Container" --text="Container to remove" );
+  container=$( zenity --entry --title="Remove Container" --text="Container to remove" );
   # and then proceeds to stop the container and remove it
   sudo docker container stop $container
   sudo docker container rm $container
