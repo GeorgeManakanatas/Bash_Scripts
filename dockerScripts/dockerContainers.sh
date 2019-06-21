@@ -1,4 +1,5 @@
 #!/bin/bash
+
 ################
 # general info #
 ################
@@ -114,9 +115,9 @@ start_menu(){
      False "MongoDB" \
      False "MariaDB" \
      False "Show containers" \
-     False "Create container" \
-     False "Starts container" \
-     False "Stop container" \
+     False "Create Container" \
+     False "Start Container" \
+     False "Stop Container" \
      False "Remove Container" \
      False "Show Images" \
      False "Remove Image" --separator=':');

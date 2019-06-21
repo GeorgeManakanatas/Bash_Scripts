@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <img id="loading" src="loading.gif" align="middle" width="200" height="100"/>
+</body>
+</html>

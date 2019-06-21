@@ -3,20 +3,23 @@
 ######################
 #  Common variables  #
 ######################
+
+currentFolder=`pwd`
 # configuration
 mongoName="mongo"
 elasticName="elasticsearch"
 grayName="graylog"
 # behaviour
 removeContainers=true
-
+global_pid=0
 ###############
 #  Functions  #
 ###############
 
-notification(){
-  # will display a notification with given text
-  zenity --notification --window-icon="info" --text="$1" --timeout=2
+display_loading(){
+  zenity --text-info --title="$1" --width="245" --height="185" --html --filename=loading_html.txt &
+  PID_ZENITY=${!}
+  global_pid=$PID_ZENITY
 }
 
 graylog_mongo(){
@@ -27,13 +30,16 @@ graylog_mongo(){
   fi
   # running container
   sudo docker run --name $mongoName -d mongo:3 &
+  #
+  display_loading "Starting $mongoName Docker"
   # wait for mongo
   until [ "`sudo docker inspect -f {{.State.Running}} $mongoName`" == "true" ]; do
-    echo "zzzzzz  waiting on mongo zzzzzz"
-    sleep 0.1;
+    sleep 10;
   done
+  # kill loading gif
+  kill $global_pid
   # notify
-  notification "Mongo running !!!"
+  spd-say "Mongo D B container running"
 }
 
 graylog_elasticsearch(){
@@ -48,13 +54,15 @@ graylog_elasticsearch(){
     -p 9300:9300 \
     -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:6.4.3 &
   # wait for elasticsearch
-  echo =====$elasticName=====
+  display_loading "Starting $elasticName Docker"
+  #
   until [ "`sudo docker inspect -f {{.State.Running}} $elasticName`" == "true" ]; do
-    echo "zzzzzz  waiting on elastic zzzzzz"
-    sleep 0.1;
+    sleep 10;
   done
+  # kill loading gif
+  kill $global_pid
   # notify
-  notification "Elastic search running !!!"
+  spd-say "elastic search container running"
 }
 
 graylog(){
@@ -69,24 +77,26 @@ graylog(){
     -e GRAYLOG_HTTP_EXTERNAL_URI="http://127.0.0.1:9000/" \
     -d graylog/graylog:3.0 &
   # wait for graylog
+  display_loading "Starting $grayName Docker"
+  #
   until [ "`sudo docker inspect -f {{.State.Health.Status}} $grayName`" == "healthy" ]; do
-    echo "zzzzzz  waiting on graylog zzzzzz"
-    sleep 1;
+    sleep 10;
   done
-  # finish
-  notification "Gaylog running !!!"
+  # kill loading gif
+  kill $global_pid
+  # notify
+  spd-say "Grey log container running"
 }
 
 
 ##################
 #  Main section  #
 ##################
-# sudo docker container rm -f $mongoName
-# sudo docker container rm -f $elasticName
-# sudo docker container rm -f $grayName
 # run mongo
 graylog_mongo
 # run elasticsearch
 graylog_elasticsearch
 # run graylog
 graylog
+# show the results
+sudo docker ps -a 
