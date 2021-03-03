@@ -12,17 +12,17 @@ One Paragraph of project description goes here
 │   ├── dockerContainers.sh
 │   ├── DockerStart.sh
 │   └── README.md
-├── LICENSE
-├── NewStartScript.sh
 ├── projectStartScripts
 │   ├── nodeProjectScript.sh
 │   ├── pythonVirtualEnvsGUI.sh
 │   ├── README.md
 │   └── startScriptCLI.sh
-├── README.md
-└── treeScript
-    ├── treeScriptAnsible
-    └── treeScriptBash
+├── treeScript
+│   ├── treeScriptAnsible
+│   └── treeScriptBash
+├── LICENSE
+├── NewStartScript.sh
+└── README.md
 
 5 directories, 10 files
 ```

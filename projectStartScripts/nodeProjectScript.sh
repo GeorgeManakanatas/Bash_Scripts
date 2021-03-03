@@ -19,22 +19,22 @@
 						atom & disown
 		        ;;
 		    "${options[3]}" )
-						gnome-terminal -x bash -c \"mongo\" & disown
+						gnome-terminal -- bash -c \"mongo\" & disown
 		        ;;
 		    "${options[4]}" )
 					  cd ~
 					  cd ./Documents/projects/Webpage/backEnd
-					  gnome-terminal -x bash -c "npm run-script developmentBackEnd" & disown
+					  gnome-terminal -- bash -c "npm run-script developmentBackEnd" & disown
 		        ;;
 				"${options[5]}" )
 						cd ~
 				    cd ./Documents/projects/Webpage/backEnd
-					  gnome-terminal -x bash -c "npm run-script testingBackEnd" & disown
+					  gnome-terminal -- bash -c "npm run-script testingBackEnd" & disown
 		        ;;
 		    "${options[6]}" )
 						cd ~
 						cd ./Documents/projects/Webpage/frontEnd
-						gnome-terminal -x bash -c "http-server" & disown
+						gnome-terminal -- bash -c "http-server" & disown
 						;;
 		    esac
 		done

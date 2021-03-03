@@ -10,7 +10,7 @@
         file:
           path: "{{input_filepath}}{{input_filename}}"
           state: touch
-      - shell: "tree -L 2 {{input_filepath}}"
+      - shell: "tree -L 2 --dirsfirst {{input_filepath}}"
         register: tree_contents
       - blockinfile:
           dest: "{{input_filepath}}{{input_filename}}"
