@@ -104,49 +104,8 @@ open_terminals(){
 ##############################
 # containers window function #
 ##############################
-start_containers(){
-  #zenity containers configuration
-  containersTitle="    Containers    "
-  containersPrompt="Make your selection"
-  containersWindowHeight=300
-  #
-  response=$(zenity --height="$containersWindowHeight" --list --checklist \
-     --title="$containersTitle" --column="" --column="$containersPrompt" \
-     False "RabbitMQ" False "ActiveMQ" False "Postgresql" False "MongoDB" \
-     False "MariaDB" False "Show containers" False "Remove Container" --separator=':');
-
-  # check for no selection
-  if [ -z "$response" ] ; then
-     echo "No selection"
-     #exit
-  fi
-
-  IFS=":" ; for word in $response ; do
-     case $word in
-        "RabbitMQ")
-          reset_rabbitmq
-          notification "RabbitMQ container restarted" ;;
-        "ActiveMQ")
-          reset_activemq
-          notification "ActiveMQ container restarted" ;;
-        "Postgresql")
-          reset_postgresql
-          notification "Postgresql container restarted" ;;
-        "MongoDB")
-          reset_mongo
-          notification "MongoDB container restarted" ;;
-        "MariaDB")
-          reset_maria
-          notification "MariaDB container restarted" ;;
-        "Show containers")
-          spd-say "Showing containers"
-          sudo docker ps -a ;;
-        "Remove Container")
-          remove_container ;;
-     esac
-  done
-  # Show containers
-  sudo docker ps -a
+Containers(){
+  ./dockerScripts/dockerContainers.sh
 }
 #
 # browsers window function
@@ -251,7 +210,7 @@ while opt=$(zenity --title="$mainTitle" --text="$mainPrompt" \
 
     case "$opt" in
     "${mainOptions[0]}" )
-      start_containers
+      Containers
         ;;
     "${mainOptions[1]}" )
       open_browsers

@@ -15,54 +15,22 @@ notification(){
   zenity --notification --window-icon="info" --text="$1" --timeout=2
 }
 reset_activemq(){
-  # rabbitmq variables
-  activemqName="ActiveMQ"
-  #
-  sudo docker rm -f $activemqName
-  sudo docker run --name $activemqName -d webcenter/activemq:latest
+  ./dockerScripts/activemqDocker.sh
 }
-reset_rabbitmq(){
-  # rabbitmq variables
-  rabitmqName="RabbitMq"
-  #
-  sudo docker rm -f $rabitmqName
-  sudo docker run --name $rabitmqName -d rabbitmq:3
+RabbitMQ(){
+  ./dockerScripts/rabbitmqDocker.sh
 }
-reset_maria(){
-  # mariadb variables
-  mariaName="maria"
-  mariaPassword="pass"
-  mariaEnvironmentPort="3306"
-  mariaContainerPort="3306"
-  #
-  sudo docker rm -f $mariaName
-  sudo docker run --name $mariaName -e MYSQL_ROOT_PASSWORD=$mariaPassword -p $mariaEnvironmentPort:$mariaContainerPort -d mariadb:10.3.10-bionic
+MongoDB(){
+  ./dockerScripts/mongodbDocker.sh
 }
-reset_mongo(){
-  # mongodb variables
-  mongoName="mongo"
-  mongoEnvironmentPort="27017"
-  mongoContainerPort="27017"
-  #
-  sudo docker rm -f $mongoName
-  sudo docker run --name $mongoName -d mongo:3.6
+MariaDB(){
+  ./dockerScripts/mariaDocker.sh
 }
-reset_postgresql(){
-  # postgresql variables
-  postgresContainerName="postgresql"
-  postgresName="db"
-  postgresUserName="user"
-  postgresPassword="pass"
-  postgresEnvironmentPort="5432"
-  postgresContainerPort="5432"
-  #
-  sudo docker rm -f $postgresContainerName ;
-  sudo docker run --name $postgresContainerName -e POSTGRESQL_USER=$postgresUserName -e POSTGRESQL_PASSWORD=$postgresPassword -e POSTGRESQL_DATABASE=$postgresName -p $postgresEnvironmentPort:$postgresContainerPort -d centos/postgresql-96-centos7 ;
+postgreSQL(){
+  ./dockerScripts/postgresqlDocker.sh
 }
-# open a terminal
-open_terminal(){
-  cd ~
-  gnome-terminal & disown
+RedisDB(){
+  ./dockerScripts/redisDocker.sh
 }
 start_container(){
   # popup for user to give the name of the container to be started and starts it
@@ -76,10 +44,13 @@ stop_container(){
 }
 create_container(){
   # popup to give a port on the host machine to bind the 8443 default of the container
-  port=$(zenity --entry --title="Container" --text="Port to assign 8443 to" );
+  internalPort=$(zenity --entry --title="Internal Port" --text="Assign internal port to" );
+  externalPort=$(zenity --entry --title="External port" --text="Assign external port to" );
   # popup for the name of the container to be created
-  name=$(zenity --entry --title="Container" --text="Name of the container" );
-  sudo docker run -p $port:8443 --name $name node_solid_server
+  containerName=$(zenity --entry --title="Container" --text="Name of the container" );
+  #
+  imageName=$(zenity --entry --title="Container" --text="Name of the image to create from" );
+  sudo docker run -p $internalPort:$externalPort --name $containerName $imageName
 }
 remove_container(){
   # popup for the user to give the name of the container to be removed
@@ -100,7 +71,7 @@ remove_image(){
 ###################################
 start_menu(){
   #zenity configuration
-  title="Node project containers"
+  title="Container Options"
   prompt="Please pick a container to run"
   windowHeight=500
   #
@@ -111,10 +82,11 @@ start_menu(){
      False "Postgresql" \
      False "MongoDB" \
      False "MariaDB" \
-     False "Show containers" \
-     False "Create container" \
-     False "Starts container" \
-     False "Stop container" \
+     False "RedisDB" \
+     False "Show Containers" \
+     False "Start Container" \
+     False "Stop Container" \
+     False "Create Container" \
      False "Remove Container" \
      False "Show Images" \
      False "Remove Image" --separator=':');
@@ -128,30 +100,33 @@ start_menu(){
   IFS=":" ; for word in $response ; do
      case $word in
         "RabbitMQ")
-          reset_rabbitmq
+          RabbitMQ
           notification "RabbitMQ started" ;;
         "ActiveMQ")
           reset_activemq
           notification "ActiveMQ stared" ;;
         "Postgresql")
-          reset_postgresql
+          postgreSQL
           notification "PostgreSQL started" ;;
         "MongoDB")
-          reset_mongo
+          MongoDB
           notification "MongoDB started" ;;
         "MariaDB")
-          reset_maria
+          MariaDB
           notification "MariaDB started" ;;
+        "RedisDB")
+          RedisDB
+          notification "RedisDB started" ;;
         "Stop Container")
         	stop_container
         	notification "Container stoped" ;;
       	"Start Container")
         	start_container
         	notification "Container started" ;;
-        "Create container")
+        "Create Container")
           create_container
           notification "Container created" ;;
-        "Show containers")
+        "Show Containers")
           sudo docker ps -a ;;
         "Remove Container" )
           remove_container
