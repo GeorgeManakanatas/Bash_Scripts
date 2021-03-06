@@ -28,7 +28,7 @@ Start_kapacitor(){
     sudo docker container rm $kapacitorName
     sudo docker run --name $kapacitorName \
                     -p $kapacitorEnvironmentPort:$kapacitorContainerPort \
-                    -v $PWD/kapacitor/kapacitor.conf:/etc/kapacitor/kapacitor.conf
+                    -v $PWD/kapacitor/kapacitor.conf:/etc/kapacitor/kapacitor.conf \
                     -d kapacitor
 };
 Start_telegraf(){
