@@ -1,0 +1,92 @@
+version: '3'
+services:
+  # FRONT
+  chronograf:
+    # Full tag list: https://hub.docker.com/r/library/chronograf/tags/
+    image: chronograf
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+    volumes:
+      # Mount for chronograf database
+      - chronograf-data:/var/lib/chronograf
+    ports:
+      # The WebUI for Chronograf is served on port 8888
+      - "8888:8888"
+    networks:
+      - influx
+    depends_on:
+      - kapacitor
+      - influxdb
+  # MIDDLE
+  kapacitor:
+    # Full tag list: https://hub.docker.com/r/library/kapacitor/tags/
+    image: kapacitor
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+    volumes:
+      # Mount for kapacitor data directory
+      - kapacitor-data:/var/lib/kapacitor
+      # Mount for kapacitor configuration
+      - ./kapacitor:/etc/kapacitor
+    ports:
+      # The API for Kapacitor is served on port 9092
+      - "9092:9092"
+    networks:
+      - influx
+    depends_on:
+      - influxdb
+  # BACK
+  telegraf:
+    # Full tag list: https://hub.docker.com/r/library/telegraf/tags/
+    image: telegraf
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+    volumes:
+      # Mount for telegraf configuration
+      - ./telegraf:/etc/telegraf
+      # Mount for Docker API access
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - influx
+    depends_on:
+      - influxdb
+  # DATABASE
+  influxdb:
+    # Full tag list: https://hub.docker.com/r/library/influxdb/tags/
+    image: influxdb
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+    volumes:
+      # Mount for influxdb data directory
+      - influxdb-data:/var/lib/influxdb
+      # Mount for influxdb configuration
+      - ./influx:/etc/influxdb
+    ports:
+      # The API for InfluxDB is served on port 8086
+      - "8086:8086"
+    networks:
+      - influx
+networks:
+  influx:
+
+volumes:
+  chronograf-data:
+  kapacitor-data:
+  influxdb-data:
